@@ -1,10 +1,10 @@
-package service;
+package com.example.todolist.service;
 
-import dto.TodoRequest;
-import dto.TodoResponse;
-import entity.Todo;
+import com.example.todolist.dto.TodoRequest;
+import com.example.todolist.dto.TodoResponse;
+import com.example.todolist.entity.Todo;
 import org.springframework.stereotype.Service;
-import repository.TodoRepository;
+import com.example.todolist.repository.TodoRepository;
 
 import java.util.List;
 

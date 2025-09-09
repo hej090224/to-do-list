@@ -1,4 +1,4 @@
-package dto;
+package com.example.todolist.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
