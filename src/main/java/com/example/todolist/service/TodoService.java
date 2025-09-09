@@ -1,7 +1,7 @@
 package com.example.todolist.service;
 
-import com.example.todolist.dto.TodoRequest;
-import com.example.todolist.dto.TodoResponse;
+import com.example.todolist.dto.TodoRequestDto;
+import com.example.todolist.dto.TodoResponseDto;
 import com.example.todolist.entity.Todo;
 import org.springframework.stereotype.Service;
 import com.example.todolist.repository.TodoRepository;
@@ -17,27 +17,27 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public List<TodoResponse> findAll() {
+    public List<TodoResponseDto> findAll() {
         return todoRepository.findAll()
                 .stream()
-                .map(todo -> new TodoResponse(todo.getId(), todo.getTask(), todo.isCompleted()))
+                .map(todo -> new TodoResponseDto(todo.getId(), todo.getTask(), todo.isCompleted()))
                 .toList();
     }
 
-    public TodoResponse save(TodoRequest request) {
+    public TodoResponseDto save(TodoRequestDto request) {
         Todo todo = Todo.builder()
                 .task(request.getTask())
                 .completed(request.isCompleted())
                 .build();
         Todo saved = todoRepository.save(todo);
-        return new TodoResponse(saved.getId(), saved.getTask(), saved.isCompleted());
+        return new TodoResponseDto(saved.getId(), saved.getTask(), saved.isCompleted());
     }
 
     public void delete(Long id) {
         todoRepository.deleteById(id);
     }
 
-    public TodoResponse update(Long id,TodoRequest request) {
+    public TodoResponseDto update(Long id, TodoRequestDto request) {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Todo가 존재하지 않습니다."));
 
@@ -45,6 +45,6 @@ public class TodoService {
         todo.setCompleted(request.isCompleted());
 
         Todo updated = todoRepository.save(todo);
-        return new TodoResponse(updated.getId(), updated.getTask(), updated.isCompleted());
+        return new TodoResponseDto(updated.getId(), updated.getTask(), updated.isCompleted());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.todolist.controller;
 
-import com.example.todolist.dto.TodoRequest;
-import com.example.todolist.dto.TodoResponse;
+import com.example.todolist.dto.TodoRequestDto;
+import com.example.todolist.dto.TodoResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import com.example.todolist.service.TodoService;
@@ -19,18 +19,18 @@ public class TodoController {
     }
 
     @GetMapping("/load")
-    public List<TodoResponse> getAlltodos() {
+    public List<TodoResponseDto> getAlltodos() {
         return todoService.findAll();
     }
 
     @PostMapping("/post")
-    public TodoResponse addTodo(@Valid @RequestBody TodoRequest todoRequest) {
-        return todoService.save(todoRequest);
+    public TodoResponseDto addTodo(@Valid @RequestBody TodoRequestDto todoRequestdto) {
+        return todoService.save(todoRequestdto);
     }
 
     @PutMapping("/{id}/edit")
-    public TodoResponse updateTodo(@PathVariable Long id, @Valid @RequestBody TodoRequest todoRequest) {
-        return todoService.update(id, todoRequest);
+    public TodoResponseDto updateTodo(@PathVariable Long id, @Valid @RequestBody TodoRequestDto todoRequestdto) {
+        return todoService.update(id, todoRequestdto);
     }
 
     @DeleteMapping("/{id}/delete")

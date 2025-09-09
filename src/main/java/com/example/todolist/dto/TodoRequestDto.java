@@ -1,15 +1,14 @@
 package com.example.todolist.dto;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class TodoResponse {
-    private Long id;
+public class TodoRequestDto {
 
+    @NotBlank(message = "할 일을 입력해야 합니다.")
     private String task;
 
     private boolean completed;

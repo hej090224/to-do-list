@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 8px 0; padding: 8px; border: 1px solid #ddd; border-radius: 5px;
+            display: flex; justify-content: space-between; align-items: center; }
+        button { margin-left: 8px; }
+        .completed { text-decoration: line-through; color: gray; }
+    </style>
+</head>
+<body>
+<h1>Todo List</h1>
+
+<!-- 할 일 추가 폼 -->
+<form id="todoForm">
+    <input type="text" id="task" placeholder="할 일 입력" required>
+    <button type="submit">추가</button>
+</form>
+
+<!-- 할 일 목록 -->
+<ul id="todoList"></ul>
+
+<script>
+    const apiBase = '/api/todos';
+
+    // 페이지 로드 시 목록 불러오기
+    document.addEventListener('DOMContentLoaded', loadTodos);
+
+    function loadTodos() {
+        fetch(apiBase + '/load')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('todoList');
+                list.innerHTML = '';
+                data.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="${todo.completed ? 'completed' : ''}">
+                            ${todo.task}
+                        </span>
+                        <div>
+                            <button onclick="toggleComplete(${todo.id}, '${todo.task}', ${!todo.completed})">
+                                ${todo.completed ? '취소' : '완료'}
+                            </button>
+                            <button onclick="editTodo(${todo.id}, '${todo.task}', ${todo.completed})">수정</button>
+                            <button onclick="deleteTodo(${todo.id})">삭제</button>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            });
+    }
+
+    // 새 todo 추가
+    document.getElementById('todoForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const task = document.getElementById('task').value;
+
+        fetch(apiBase + '/post', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: task, completed: false })
+        }).then(() => {
+            document.getElementById('task').value = '';
+            loadTodos();
+        });
+    });
+
+    // todo 수정
+    function editTodo(id, currentTask, completed) {
+        const newTask = prompt('새로운 할 일을 입력하세요', currentTask);
+        if (newTask) {
+            fetch(`${apiBase}/${id}/edit`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: newTask, completed: completed })
+            }).then(loadTodos);
+        }
+    }
+
+    // todo 완료/취소 토글
+    function toggleComplete(id, currentTask, completed) {
+        fetch(`${apiBase}/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: currentTask, completed: completed })
+        }).then(loadTodos);
+    }
+
+    // todo 삭제
+    function deleteTodo(id) {
+        if (confirm('정말 삭제하시겠습니까?')) {
+            fetch(`${apiBase}/${id}/delete`, { method: 'DELETE' })
+                .then(loadTodos);
+        }
+    }
+</script>
+</body>
+</html>
